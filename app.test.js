@@ -7,7 +7,7 @@ const request = require("supertest")
 afterAll(() => db.end())
 beforeEach(() => seed(data))
 
-describe.only("/*", () => {
+describe("/*", () => {
     test("status: 400 when passed endpoint that does not exist", () => {
         return request(app)
         .get("/test")
