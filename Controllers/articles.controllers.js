@@ -15,7 +15,6 @@ exports.updateVotesByArticleId = (req, res, next) => {
     changeVotesByArticleId(article_id, inc_votes).then((article) => {
         res.send({article})
     }).catch((err) => {
-        console.log(err.code)
         next(err)
     })
 }
