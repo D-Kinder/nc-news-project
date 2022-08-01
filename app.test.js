@@ -19,7 +19,7 @@ describe("/*", () => {
 })
 
 
-describe("api/topics", () => {
+describe("/api/topics", () => {
     describe("GET", () => {
         describe("Functionality", () => {
             test("status 200: returns an array", () => {
@@ -52,7 +52,7 @@ describe("api/topics", () => {
     })
 })
 
-describe("api/articles/:article_id", () => {
+describe("/api/articles/:article_id", () => {
     describe("GET", () => {
         describe("Functionality", () => {
             test("status:200 returns relevant information about a chosen article (1)", () => {
@@ -115,7 +115,7 @@ describe("api/articles/:article_id", () => {
     })
     describe("PATCH", () => {
         describe("Functionality", () => {
-            test("status: 200 increments votes for chosen article and responds with article details, including updated vote count", () => {
+            test("status: 204 increments votes for chosen article and responds with article details, including updated vote count", () => {
                 const voteAlteration = {
                     inc_votes: 10
                 }
@@ -136,7 +136,7 @@ describe("api/articles/:article_id", () => {
                 })
                 })
             })
-            test("status:200 decrements votes for chosen article and responds with article details, including updated vote count", () => {
+            test("status:204 decrements votes for chosen article and responds with article details, including updated vote count", () => {
                 const voteAlteration = {
                     inc_votes: '-10'
                 }
@@ -203,6 +203,40 @@ describe("api/articles/:article_id", () => {
                 .expect(400)
                 .then(({body}) => {
                     expect(body.msg).toBe("Invalid data entry, please see relevant endpoint section in documentation for correct syntax")
+                })
+            })
+        })
+    })
+})
+
+describe("/api/users", () => {
+    describe("GET", () => {
+        describe("Functionality", () => {
+            test("status: 200 returns an array", () => {
+                return request(app)
+                .get("/api/users")
+                .expect(200)
+                .then(({body}) => {
+                    const { users } = body
+                    expect(users).toBeInstanceOf(Array)
+                    expect(users).toHaveLength(4)
+                })
+            })
+            test("status 200: returns users data with correct keys and value data types", () => {
+                return request(app)
+                .get("/api/users")
+                .expect(200)
+                .then(({ body }) => {
+                    const { users } = body
+                    users.forEach((user) => {
+                        expect(user).toEqual(
+                            expect.objectContaining({
+                                username: expect.any(String),
+                                name: expect.any(String),
+                                avatar_url: expect.any(String)
+                            })
+                        )
+                    })
                 })
             })
         })
