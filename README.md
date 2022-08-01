@@ -14,7 +14,9 @@ Then run `npm setup-dbs` to create the database before proceeding.
 
 The following are valid endpoints that can be used to access/ modify the databases via the server.
 
-### 1. GET /api/topics
+### 1. /api/topics
+
+### GET
 
 Responds with a JSON object containing a key of `topics` with a value of an array containing all of the topics objects.
 
@@ -38,7 +40,9 @@ E.g.
 }
 ```
 
-### GET /api/articles/:article_id
+### 2. /api/articles/:article_id
+
+### GET
 
 Accepts an article_id, entered as an integer, and responds with a JSON object containing a key of `article` with a value of an object containing all information on the requested article.
 
@@ -59,3 +63,36 @@ E.g.
   }
 }
 ```
+
+### PATCH
+
+Accepts an article_id, entered as an integer, and body of information in the form:
+
+```js
+ {
+  inc_vote: newVote
+}
+```
+Where newVote, entered as an integer, indicates how much the votes property in the database will be updated by.
+
+Responds with a JSON object containing a key of `article` with a value of an object containing all information on the requested article, with updated vote count.
+
+E.g.
+
+`PATCH /api/articles/1`
+`{ inc_vote: 10 }` Responds with...
+
+```js
+{
+  "article": {
+    author: "butter_bridge",
+    title: "Living in the shadow of a great man",
+    article_id: 1,
+    body: "I find this existence challenging",
+    topic: "mitch",
+    created_at: "2020-07-09T20:11:00.000Z",
+    votes: 110
+  }
+}
+```
+
