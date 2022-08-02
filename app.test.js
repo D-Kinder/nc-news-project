@@ -217,7 +217,7 @@ describe("/api/articles/:article_id", () => {
                     expect(body.msg).toBe("Invalid request")
                 })
             })
-            test("status: 400 returns appropriate message when passed an invalid 'inc_vote' data entry", () => {
+            test("status: 400 responds with appropriate message when passed an invalid value data entry", () => {
                 const voteAlteration = {
                     inc_votes: 'hello'
                 }
@@ -229,7 +229,7 @@ describe("/api/articles/:article_id", () => {
                     expect(body.msg).toBe("Invalid request")
                 })
             })
-            test("status: 400 returns appropriate message when passed an invalid data entry format", () => {
+            test("status: 400 responds with appropriate message when passed an invalid data entry format", () => {
                 const voteAlteration = {
                     votes: 9
                 }
@@ -403,6 +403,126 @@ describe("/api/articles/:article_id/comments", () => {
                 .expect(400)
                 .then(({ body }) => {
                     expect(body.msg).toBe("Invalid request")
+                })
+            })
+        })
+    })
+    describe("POST", () => {
+        describe("Functionality", () => {
+            test.only("status: 201 adds a comment to the comments table and responds with the added comment, followed by checking comment was added to array of comments", () => {
+                const newComment = {
+                    username: 'butter_bridge',
+                    body: "Butter only belongs on toast"
+                }
+                return request(app)
+                .post("/api/articles/2/comments")
+                .send(newComment)
+                .expect(201)
+                .then(({body}) => {
+                    expect(body.comment).toEqual({
+                        comment_id: 19,
+                        votes: 0,
+                        author: 'butter_bridge',
+                        article_id: 2,
+                        created_at: expect.any(String),
+                        body: 'Butter only belongs on toast'
+                    })
+                }).then(()=>{
+                    return request(app)
+                    .get("/api/articles/2/comments")
+                    .expect(200)
+                    .then(({body}) => {
+                        const {comments} = body
+                        expect(comments).toEqual({
+                            comment_id: 19,
+                            votes: 0,
+                            author: "butter_bridge",
+                            created_at: expect.any(String),
+                            body: "Butter only belongs on toast"
+                        })
+                    })
+                })
+            })
+            test("status: 201 adds a comment to the comments table and responds with the added comment, followed by checking comment was added to array of comments", () => {
+                const newComment = {
+                    username: 'butter_bridge',
+                    body: "Butter only belongs on toast"
+                }
+                return request(app)
+                .post("/api/articles/1/comments")
+                .send(newComment)
+                .expect(201)
+                .then(({body}) => {
+                    expect(body.comment).toEqual({
+                        comment_id: 19,
+                        votes: 0,
+                        author: 'butter_bridge',
+                        article_id: 1,
+                        created_at: expect.any(String),
+                        body: 'Butter only belongs on toast'
+                    })
+                }).then(()=>{
+                    return request(app)
+                    .get("/api/articles/1/comments")
+                    .expect(200)
+                    .then(({body}) => {
+                        const {comments} = body
+                        expect(comments).toBeInstanceOf(Array)
+                        expect(comments).toHaveLength(12)
+                    })
+                })
+            })
+        })
+        describe("Error Handling", () => {
+            test("status: 404 responds with appropriate message when passed a valid, but non-existent, article_id", () => {
+                const newComment = {
+                    username: 'butter_bridge',
+                    body: "Butter only belongs on toast"
+                }
+                return request(app)
+                .post("/api/articles/999/comments")
+                .send(newComment)
+                .expect(404)
+                .then(({ body }) => {
+                    expect(body.msg).toBe("Passed ID does not exist")
+                })
+            })
+            test("status: 400 responds with appropiate message when passed an invalid article_id", () => {
+                const newComment = {
+                    username: 'butter_bridge',
+                    body: "Butter only belongs on toast"
+                }
+                return request(app)
+                .post("/api/articles/invalid/comments")
+                .send(newComment)
+                .expect(400)
+                .then(({ body }) => {
+                    expect(body.msg).toBe("Invalid request")
+                })
+            })
+            test("status: 400 responds with appropriate message when passed an invalid data entry format", () => {
+                const newComment = {
+                    usernamez: 'butter_bridge',
+                    bodee: "Butter only belongs on toast"
+                }
+                return request(app)
+                .post("/api/articles/1/comments")
+                .send(newComment)
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Invalid data entry, please see relevant endpoint section in documentation for correct syntax")
+                })
+            })
+            test("status: 400 reponds with appropriate message when passed data entry with missing properties", () => {
+                const newComment = {
+                    username: 'butter_bridge',
+                }
+                return request(app)
+                .post("/api/articles/1/comments")
+                .send(newComment)
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Invalid data entry, please see relevant endpoint section in documentation for correct syntax")
                 })
             })
         })

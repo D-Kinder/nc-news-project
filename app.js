@@ -4,7 +4,7 @@ app.use(express.json())
 const {getTopics} = require("./Controllers/topics.controllers")
 const { getArticleById, updateVotesByArticleId, getArticles } = require("./Controllers/articles.controllers")
 const { getUsers } = require("./Controllers/users.controllers")
-const { getCommentsByArticleId } = require("./Controllers/comments.controllers")
+const { getCommentsByArticleId, addComment } = require("./Controllers/comments.controllers")
 
 app.get("/api/topics", getTopics)
 
@@ -18,6 +18,8 @@ app.get("/api/articles", getArticles)
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId)
 
+app.post("/api/articles/:article_id/comments", addComment)
+
 app.all("/*", (req, res) => {
     res.status(404).send({msg: "Endpoint not found"})
 })
@@ -30,6 +32,8 @@ app.use((err, req, res, next) => {
             res.status(400).send({msg:"Invalid request"})
         } else if (err.code === "23502") {
             res.status(400).send({msg:"Invalid data entry, please see relevant endpoint section in documentation for correct syntax"})
+        } else if (err.code === "23503"){
+            res.status(404).send({msg: "Passed ID does not exist"})
         }
         res.status(err.status).send({ msg: err.msg} )
         } else {
