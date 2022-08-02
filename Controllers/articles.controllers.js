@@ -1,4 +1,4 @@
-const { selectArticleById, changeVotesByArticleId } = require("../Models/articles.models")
+const { selectArticleById, changeVotesByArticleId, selectArticles } = require("../Models/articles.models")
 
 exports.getArticleById = (req, res, next) => {
     const { article_id } = req.params
@@ -16,5 +16,11 @@ exports.updateVotesByArticleId = (req, res, next) => {
         res.send({article})
     }).catch((err) => {
         next(err)
+    })
+}
+
+exports.getArticles = (req, res, next) => {
+    selectArticles().then((articles) => {
+        res.send({articles})
     })
 }

@@ -2,7 +2,7 @@ const express = require("express")
 const app = express()
 app.use(express.json())
 const {getTopics} = require("./Controllers/topics.controllers")
-const { getArticleById, updateVotesByArticleId} = require("./Controllers/articles.controllers")
+const { getArticleById, updateVotesByArticleId, getArticles } = require("./Controllers/articles.controllers")
 const { getUsers } = require("./Controllers/users.controllers")
 
 app.get("/api/topics", getTopics)
@@ -12,6 +12,8 @@ app.get("/api/articles/:article_id", getArticleById)
 app.patch("/api/articles/:article_id", updateVotesByArticleId)
 
 app.get("/api/users", getUsers)
+
+app.get("/api/articles", getArticles)
 
 app.all("/*", (req, res) => {
     res.status(404).send({msg: "Endpoint not found"})

@@ -32,7 +32,7 @@ describe("/api/topics", () => {
                     expect(topics).toHaveLength(3)
                 })
             })
-            test("status 200: returns topics data with correct keys and value data types", () => {
+            test("status 200: returns topics data with correct keys and values data", () => {
                 return request(app)
                 .get("/api/topics")
                 .expect(200)
@@ -164,16 +164,14 @@ describe("/api/articles/:article_id", () => {
                 .send(voteAlteration)
                 .expect(200)
                 .then(({ body }) => {
-                const { article } = body
-                expect(article).toEqual({
-                    author: "butter_bridge",
-                    title: "Living in the shadow of a great man",
-                    article_id: 1,
-                    body: "I find this existence challenging",
-                    topic: "mitch",
-                    created_at: "2020-07-09T20:11:00.000Z",
-                    votes: 110
-                })
+                const { article } = body             
+                    expect(article.author).toBe("butter_bridge");
+                    expect(article.title).toBe("Living in the shadow of a great man");
+                    expect(article.article_id).toBe(1);
+                    expect(article.body).toBe("I find this existence challenging");
+                    expect(article.topic).toBe("mitch");
+                    expect(article.created_at).toBe("2020-07-09T20:11:00.000Z");
+                    expect(article.votes).toBe(110)            
                 })
             })
             test("status:204 decrements votes for chosen article and responds with article details, including updated vote count", () => {
@@ -186,15 +184,13 @@ describe("/api/articles/:article_id", () => {
                 .expect(200)
                 .then(({ body }) => {
                 const { article } = body
-                expect(article).toEqual({
-                    author: "butter_bridge",
-                    title: "Living in the shadow of a great man",
-                    article_id: 1,
-                    body: "I find this existence challenging",
-                    topic: "mitch",
-                    created_at: "2020-07-09T20:11:00.000Z",
-                    votes: 90
-                })
+                    expect(article.author).toBe("butter_bridge");
+                    expect(article.title).toBe("Living in the shadow of a great man");
+                    expect(article.article_id).toBe(1);
+                    expect(article.body).toBe("I find this existence challenging");
+                    expect(article.topic).toBe("mitch");
+                    expect(article.created_at).toBe("2020-07-09T20:11:00.000Z");
+                    expect(article.votes).toBe(90)             
                 })
             })
         })
@@ -277,6 +273,68 @@ describe("/api/users", () => {
                             })
                         )
                     })
+                })
+            })
+        })
+    })
+})
+
+describe("/api/articles", () => {
+    describe("GET", () => {
+        describe("Functionality", () => {
+            test("status:200 returns an array", () => {
+                return request(app)
+                .get("/api/articles")
+                .expect(200)
+                .then(({body}) => {
+                    const { articles } = body
+                    expect(articles).toBeInstanceOf(Array)
+                    expect(articles).toHaveLength(12)
+                })
+            })
+            test("status: 200 returns articles data with correct keys and values data", () => {
+                return request(app)
+                .get("/api/articles")
+                .expect(200)
+                .then(({body}) => {
+                    const { articles } = body
+                    articles.forEach((article) => {
+                        expect(article.article_id).toEqual(expect.any(Number))
+                        expect(article.title).toEqual(expect.any(String))
+                        expect(article.topic).toEqual(expect.any(String))
+                        expect(article.author).toEqual(expect.any(String))
+                        expect(article.body).toEqual(expect.any(String))
+                        expect(article.created_at).toEqual(expect.any(String))
+                        expect(article.votes).toEqual(expect.any(Number))
+                    })
+                })
+            })
+            test("status: 200 returns articles data with correct keys and values data, including comment_count column", () => {
+                return request(app)
+                .get("/api/articles")
+                .expect(200)
+                .then(({body}) => {
+                    const { articles } = body
+                    articles.forEach((article) => {
+                        expect(article.article_id).toEqual(expect.any(Number))
+                        expect(article.title).toEqual(expect.any(String))
+                        expect(article.topic).toEqual(expect.any(String))
+                        expect(article.author).toEqual(expect.any(String))
+                        expect(article.body).toEqual(expect.any(String))
+                        expect(article.created_at).toEqual(expect.any(String))
+                        expect(article.votes).toEqual(expect.any(Number))
+                        expect(article.comment_count).toEqual(expect.any(Number))
+                    })
+                })
+            })
+            test("status: 200 returns articles data with correct keys and values data, including articles with 0 comments", () => {
+                return request(app)
+                .get("/api/articles")
+                .expect(200)
+                .then(({body}) => {
+                    const { articles } = body
+                    const doesArticleContaingCommentcount0 = articles.some(article => article['comment_count'] === 0)
+                    expect(doesArticleContaingCommentcount0).toBe(true)
                 })
             })
         })
