@@ -44,7 +44,7 @@ E.g.
 
 ### GET
 
-Accepts an article_id, entered as an integer, and responds with a JSON object containing a key of `article` with a value of an object containing all information on the requested article.
+Accepts an article_id, entered as an integer, and responds with a JSON object containing a key of `article` with a value of an object containing all information on the requested article, including a count of the number of comments for that article.
 
 E.g.
 
@@ -59,7 +59,8 @@ E.g.
     body: "I find this existence challenging",
     topic: "mitch",
     created_at: "2020-07-09T20:11:00.000Z",
-    votes: 100
+    votes: 100,
+    comment_count: 11
   }
 }
 ```
