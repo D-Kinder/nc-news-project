@@ -348,3 +348,63 @@ describe("/api/articles", () => {
         })
     })
 })
+
+describe("/api/articles/:article_id/comments", () => {
+    describe("GET", () => {
+        describe("Functionality", () => {
+            test("staus:200 responds with an array", () => {
+                return request(app)
+                .get("/api/articles/1/comments")
+                .expect(200)
+                .then(({body}) => {
+                    const {comments} = body
+                    expect(comments).toBeInstanceOf(Array)
+                    expect(comments).toHaveLength(11)
+                })
+            })
+            test("status: 200 responds with relevant comment information about a chosen article_id (1)", () => {
+                return request(app)
+                .get("/api/articles/1/comments")
+                .expect(200)
+                .then(({body}) => {
+                    const {comments} = body
+                    comments.forEach((comment) => {
+                        expect(comment.comment_id).toEqual(expect.any(Number))
+                        expect(comment.votes).toEqual(expect.any(Number))
+                        expect(comment.created_at).toEqual(expect.any(String))
+                        expect(comment.author).toEqual(expect.any(String))
+                        expect(comment.body).toEqual(expect.any(String))
+                    })
+                })
+            })
+            test("status: 200 responds with an empty array when passed a valid article_id that has no comments", () => {
+                return request(app)
+                .get("/api/articles/2/comments")
+                .expect(200)
+                .then(({body}) => {
+                    const {comments} = body
+                    expect(comments).toBeInstanceOf(Array)
+                    expect(comments).toHaveLength(0)
+                })
+            })
+        })
+        describe("Error Handling", () => {
+            test("status: 404 responds with appropriate message when passed a valid, but non-existent, article_id", () => {
+                return request(app)
+                .get("/api/articles/999/comments")
+                .expect(404)
+                .then(({ body }) => {
+                    expect(body.msg).toBe("Passed ID does not exist")
+                })
+            })
+            test("status: 400 responds with appropiate message when passed an invalid article_id", () => {
+                return request(app)
+                .get("/api/articles/invalid/comments")
+                .expect(400)
+                .then(({ body }) => {
+                    expect(body.msg).toBe("Invalid request")
+                })
+            })
+        })
+    })
+})

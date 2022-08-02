@@ -6,7 +6,7 @@ exports.selectArticleById = (article_id) => {
     WHERE articles.article_id = $1
     GROUP BY articles.article_id`, [article_id])
     .then(({ rows }) => {
-        if(rows.length === 0){
+        if(rows[0] === undefined){
             return Promise.reject({status: 404, msg: "Passed ID does not exist"})
         }
         return rows[0]
