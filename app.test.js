@@ -217,7 +217,7 @@ describe("/api/articles/:article_id", () => {
                     expect(body.msg).toBe("Invalid request")
                 })
             })
-            test("status: 400 returns appropriate message when passed an invalid 'inc_vote' data entry", () => {
+            test("status: 400 responds with appropriate message when passed an invalid value data entry", () => {
                 const voteAlteration = {
                     inc_votes: 'hello'
                 }
@@ -229,7 +229,7 @@ describe("/api/articles/:article_id", () => {
                     expect(body.msg).toBe("Invalid request")
                 })
             })
-            test("status: 400 returns appropriate message when passed an invalid data entry format", () => {
+            test("status: 400 responds with appropriate message when passed an invalid data entry format", () => {
                 const voteAlteration = {
                     votes: 9
                 }
@@ -409,7 +409,7 @@ describe("/api/articles/:article_id/comments", () => {
     })
     describe("POST", () => {
         describe("Functionality", () => {
-            test("status: 201 adds a comment to the comments table and responds with the added comment, followed by checking comment was added to array of comments", () => {
+            test.only("status: 201 adds a comment to the comments table and responds with the added comment, followed by checking comment was added to array of comments", () => {
                 const newComment = {
                     username: 'butter_bridge',
                     body: "Butter only belongs on toast"
@@ -433,8 +433,13 @@ describe("/api/articles/:article_id/comments", () => {
                     .expect(200)
                     .then(({body}) => {
                         const {comments} = body
-                        expect(comments).toBeInstanceOf(Array)
-                        expect(comments).toHaveLength(1)
+                        expect(comments).toEqual({
+                            comment_id: 19,
+                            votes: 0,
+                            author: "butter_bridge",
+                            created_at: expect.any(String),
+                            body: "Butter only belongs on toast"
+                        })
                     })
                 })
             })
@@ -493,6 +498,31 @@ describe("/api/articles/:article_id/comments", () => {
                 .expect(400)
                 .then(({ body }) => {
                     expect(body.msg).toBe("Invalid request")
+                })
+            })
+            test("status: 400 responds with appropriate message when passed an invalid data entry format", () => {
+                const newComment = {
+                    usernamez: 'butter_bridge',
+                    bodee: "Butter only belongs on toast"
+                }
+                return request(app)
+                .post("/api/articles/1/comments")
+                .send(newComment)
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Invalid data entry, please see relevant endpoint section in documentation for correct syntax")
+                })
+            })
+            test("status: 400 reponds with appropriate message when passed data entry with missing properties", () => {
+                const newComment = {
+                    username: 'butter_bridge',
+                }
+                return request(app)
+                .post("/api/articles/1/comments")
+                .send(newComment)
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Invalid data entry, please see relevant endpoint section in documentation for correct syntax")
                 })
             })
         })

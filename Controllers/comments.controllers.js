@@ -14,14 +14,14 @@ exports.getCommentsByArticleId = (req, res, next) => {
 }
 
 exports.addComment = (req, res, next) => {
-    const { username } = req.body
-    const { body } = req.body
+    const { username, body } = req.body
     const { article_id } = req.params
     
     insertComment(article_id, username, body).then((comment) => {
         res.status(201).send({comment})
     })
     .catch((err) => {
+        console.log(err)
         next(err)
     })
 }
