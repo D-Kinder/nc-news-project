@@ -23,11 +23,38 @@ exports.changeVotesByArticleId = (article_id, inc_votes) => {
     })
 }
 
-exports.selectArticles = () => {
-    return db.query(`SELECT articles.*, COUNT(comments.article_id)::INT AS comment_count
-    FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id
-    GROUP BY articles.article_id
-    ORDER BY articles.created_at DESC`).then(({rows}) => {
+exports.selectArticles = (sort_by = "created_at", order = "desc", topic, isQueryInvalid) => {
+    const validSortBy = ["title", "topic", "author", "body", "created_at", "votes", "article_id"]
+    const validOrder = ["asc", "desc"]
+    
+    if (!validSortBy.includes(sort_by) || (!validOrder.includes(order))){
+        return Promise.reject({status: 400, msg: "Invalid query parameter"})
+    }
+
+    if(isQueryInvalid){
+        return Promise.reject({status: 400, msg: "Invalid query property"})
+    }
+
+    let queryString = `SELECT articles.*, COUNT(comments.article_id)::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id `
+    let injectionArray = []
+   
+    if(topic !== undefined){
+        queryString += `WHERE topic = $1 `
+        injectionArray.push(topic)
+    }
+    
+    queryString += `GROUP BY articles.article_id `
+    
+    if(order === "asc"){
+        queryString += `ORDER BY ${sort_by} ASC`
+    } else {
+        queryString += `ORDER BY ${sort_by} DESC`
+    }
+    
+    return db.query(queryString, injectionArray).then(({rows}) => {
+        if(rows.length !== 1){
         return rows
+        }
+        return rows[0]
     })
 }

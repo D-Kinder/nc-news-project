@@ -55,7 +55,7 @@ describe("/api/topics", () => {
 describe("/api/articles/:article_id", () => {
     describe("GET", () => {
         describe("Functionality", () => {
-            test("status:200 responds with relevant information about a chosen article (1)", () => {
+            test("status: 200 responds with relevant information about a chosen article (1)", () => {
                 return request(app)
                 .get("/api/articles/1")
                 .expect(200)
@@ -70,7 +70,7 @@ describe("/api/articles/:article_id", () => {
                             expect(article.votes).toBe(100)                    
                 })
             })
-            test("status:200 responds with relevant information about a chosen article (3)", () => {
+            test("status: 200 responds with relevant information about a chosen article (3)", () => {
                 return request(app)
                 .get("/api/articles/3")
                 .expect(200)
@@ -85,7 +85,7 @@ describe("/api/articles/:article_id", () => {
                             expect(article.votes).toBe(0);
                })
             })
-            test("status:200 also responds with relevant information about a chosen article (1), now including comment_count", () => {
+            test("status: 200 also responds with relevant information about a chosen article (1), now including comment_count", () => {
                 return request(app)
                 .get("/api/articles/1")
                 .expect(200)
@@ -101,7 +101,7 @@ describe("/api/articles/:article_id", () => {
                             expect(article.comment_count).toBe(11)                    
                 })
             })
-            test("status:200 also responds with relevant information about a chosen article (3), now including comment_count", () => {
+            test("status: 200 also responds with relevant information about a chosen article (3), now including comment_count", () => {
                 return request(app)
                 .get("/api/articles/3")
                 .expect(200)
@@ -117,7 +117,7 @@ describe("/api/articles/:article_id", () => {
                             expect(article.comment_count).toBe(2)
                })
             })
-            test("status:200 also responds with relevant information about a chosen article (7), with comment_count indicating 0 if chosen article has none", () => {
+            test("status: 200 also responds with relevant information about a chosen article (7), with comment_count indicating 0 if chosen article has none", () => {
                 return request(app)
                 .get("/api/articles/7")
                 .expect(200)
@@ -155,7 +155,7 @@ describe("/api/articles/:article_id", () => {
     })
     describe("PATCH", () => {
         describe("Functionality", () => {
-            test("status: 204 increments votes for chosen article and responds with article details, including updated vote count", () => {
+            test("status: 200 increments votes for chosen article and responds with article details, including updated vote count", () => {
                 const voteAlteration = {
                     inc_votes: 10
                 }
@@ -174,7 +174,7 @@ describe("/api/articles/:article_id", () => {
                     expect(article.votes).toBe(110)            
                 })
             })
-            test("status:204 decrements votes for chosen article and responds with article details, including updated vote count", () => {
+            test("status: 200 decrements votes for chosen article and responds with article details, including updated vote count", () => {
                 const voteAlteration = {
                     inc_votes: '-10'
                 }
@@ -195,7 +195,7 @@ describe("/api/articles/:article_id", () => {
             })
         })
         describe("Error Handling", () => {
-            test("status: 404 returns appropriate message when passed a valid, but non-existent, article_id", () => {
+            test("status: 404 responds with appropriate message when passed a valid, but non-existent, article_id", () => {
                 const voteAlteration = {
                     inc_votes: '10'
                 }
@@ -206,7 +206,7 @@ describe("/api/articles/:article_id", () => {
                     expect(body.msg).toBe("Passed ID does not exist")
                 })
             })
-            test("status: 400 returns appropiate message when passed an invalid article_id", () => {
+            test("status: 400 responds with appropiate message when passed an invalid article_id", () => {
                 const voteAlteration = {
                     inc_votes: '10'
                 }
@@ -258,7 +258,7 @@ describe("/api/users", () => {
                     expect(users).toHaveLength(4)
                 })
             })
-            test("status 200: responds with users data with correct keys and value data types", () => {
+            test("status: 200 responds with users data with correct keys and value data types", () => {
                 return request(app)
                 .get("/api/users")
                 .expect(200)
@@ -282,7 +282,7 @@ describe("/api/users", () => {
 describe("/api/articles", () => {
     describe("GET", () => {
         describe("Functionality", () => {
-            test("status:200 responds with an array", () => {
+            test("status: 200 responds with an array", () => {
                 return request(app)
                 .get("/api/articles")
                 .expect(200)
@@ -337,12 +337,208 @@ describe("/api/articles", () => {
                     expect(doesArticleContaingCommentcount0).toBe(true)
                 })
             })
-            test("status: 200 responds with articles in created_at order, descending", () => {
+            test("status: 200 responds with articles in created_at order (default), descending order (default)", () => {
                 return request(app)
                 .get("/api/articles")
                 .expect(200)
                 .then(({body: { articles }} ) => {
                    expect(articles).toBeSortedBy("created_at", { descending: true });
+                })
+            })
+            test("status: 200 responds with articles data, sorted by a passed query (default: descending)", () => {
+                return request(app)
+                .get("/api/articles?sort_by=votes")
+                .expect(200)
+                .then(({body : { articles }}) => {
+                    expect(articles).toBeSortedBy("votes", { descending: true })
+                })
+            })
+            test("status: 200 responds with articles data, sorted by a passed query (default: descending)", () => {
+                return request(app)
+                .get("/api/articles?sort_by=author")
+                .expect(200)
+                .then(({body : { articles }}) => {
+                    expect(articles).toBeSortedBy("author", { descending: true })
+                })
+            })
+            test("status: 200 responds with articles data, sorted by a created_at (default) in ascending order", () => {
+                return request(app)
+                .get("/api/articles?order=asc")
+                .expect(200)
+                .then(({body : { articles }}) => {
+                    expect(articles).toBeSortedBy("created_at")
+                })
+            })
+            test("status: 200 responds with articles data, sorted by a passed query with order passed by user", () => {
+                return request(app)
+                .get("/api/articles?sort_by=votes&order=asc")
+                .expect(200)
+                .then(({body : { articles }}) => {
+                    expect(articles).toBeSortedBy("votes")
+                })
+            })
+            test("status: 200 responds with articles data, sorted by a passed query with order passed by user", () => {
+                return request(app)
+                .get("/api/articles?sort_by=topic&order=asc")
+                .expect(200)
+                .then(({body : { articles }}) => {
+                    expect(articles).toBeSortedBy("topic")
+                })
+            })
+            test("status: 200 responds with articles data, filtered by a passed query", () => {
+                return request(app)
+                .get("/api/articles?topic=cats")
+                .expect(200)
+                .then(({body : { articles }}) => {
+                    expect(articles).toEqual({
+                        article_id: expect.any(Number),
+                        title: expect.any(String),
+                        topic: "cats",
+                        author: expect.any(String),
+                        body: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                        comment_count: expect.any(Number)
+                    })
+                })
+            })
+            test("status: 200 responds with articles data, filtered by a passed query, descending order (default)", () => {
+                return request(app)
+                .get("/api/articles?topic=mitch")
+                .expect(200)
+                .then(({body : { articles }}) => {
+                    expect(articles).toBeInstanceOf(Array)
+                    expect(articles).toHaveLength(11)
+                    expect(articles).toBeSortedBy("created_at", { descending: true})
+                    articles.forEach((article) => {
+                        expect(article).toEqual(
+                            expect.objectContaining({
+                                topic: "mitch",
+                                article_id: expect.any(Number),
+                                title: expect.any(String),
+                                author: expect.any(String),
+                                body: expect.any(String),
+                                created_at: expect.any(String),
+                                votes: expect.any(Number),
+                                comment_count: expect.any(Number)
+                            })
+                        )
+                    })
+                })
+            })
+            test("status: 200 responds with articles data, filtered by a passed query, sorted by created_at (default) and ordered by passed query", () => {
+                return request(app)
+                .get("/api/articles?topic=mitch&order=asc")
+                .expect(200)
+                .then(({body : { articles }}) => {
+                    expect(articles).toBeInstanceOf(Array)
+                    expect(articles).toHaveLength(11)
+                    expect(articles).toBeSortedBy("created_at")
+                    articles.forEach((article) => {
+                        expect(article).toEqual(
+                            expect.objectContaining({
+                                topic: "mitch",
+                                article_id: expect.any(Number),
+                                title: expect.any(String),
+                                author: expect.any(String),
+                                body: expect.any(String),
+                                created_at: expect.any(String),
+                                votes: expect.any(Number),
+                                comment_count: expect.any(Number)
+                            })
+                        )
+                    })
+                })
+            })
+            test("status: 200 responds with articles data, filtered by a passed query and ordered by a selected property, ascending", () => {
+                return request(app)
+                .get("/api/articles?topic=mitch&sort_by=votes&order=asc")
+                .expect(200)
+                .then(({body : { articles }}) => {
+                    expect(articles).toBeInstanceOf(Array)
+                    expect(articles).toHaveLength(11)
+                    expect(articles).toBeSortedBy("votes")
+                    articles.forEach((article) => {
+                        expect(article).toEqual(
+                            expect.objectContaining({
+                                topic: "mitch",
+                                article_id: expect.any(Number),
+                                title: expect.any(String),
+                                author: expect.any(String),
+                                body: expect.any(String),
+                                created_at: expect.any(String),
+                                votes: expect.any(Number),
+                                comment_count: expect.any(Number)
+                            })
+                        )
+                    })
+                })
+            })
+            test("status: 200 responds with articles data, filtered by a passed query and ordered by a selected property (default, descending)", () => {
+                return request(app)
+                .get("/api/articles?topic=mitch&sort_by=votes")
+                .expect(200)
+                .then(({body : { articles }}) => {
+                    expect(articles).toBeInstanceOf(Array)
+                    expect(articles).toHaveLength(11)
+                    expect(articles).toBeSortedBy("votes", { descending: true })
+                    articles.forEach((article) => {
+                        expect(article).toEqual(
+                            expect.objectContaining({
+                                topic: "mitch",
+                                article_id: expect.any(Number),
+                                title: expect.any(String),
+                                author: expect.any(String),
+                                body: expect.any(String),
+                                created_at: expect.any(String),
+                                votes: expect.any(Number),
+                                comment_count: expect.any(Number)
+                            })
+                        )
+                    })
+                })
+            })
+            test("status: 200 responds with empty array if filter query does not yield any results", () => {
+                return request(app)
+                .get("/api/articles?topic=dogs")
+                .expect(200)
+                .then(({body : { articles }}) => {
+                    expect(articles).toBeInstanceOf(Array)
+                    expect(articles).toHaveLength(0)
+                })
+            })
+        })
+        describe("Error Handling", () => {
+            test("status: 400 responds with appropriate message if user attempts to sort_by invalid property", () => {
+                return request(app)
+                .get("/api/articles?sort_by=word_count")
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Invalid query parameter")
+                })
+            })
+            test("status: 400 responds with appropriate message if user attempts to order using invalid syntax", () => {
+                return request(app)
+                .get("/api/articles?order=ascending")
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Invalid query parameter")
+                })
+            })
+            test("status: 400 responds with appropriate message if query property does not exist (single query)", () => {
+                return request(app)
+                .get("/api/articles?sortby=votes")
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Invalid query property")
+                })
+            })
+            test("status: 400 responds with appropriate message if query property does not exist (multiple queries)", () => {
+                return request(app)
+                .get("/api/articles?sortby=votes&order=asc")
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Invalid query property")
                 })
             })
         })
@@ -352,7 +548,7 @@ describe("/api/articles", () => {
 describe("/api/articles/:article_id/comments", () => {
     describe("GET", () => {
         describe("Functionality", () => {
-            test("staus:200 responds with an array", () => {
+            test("status: 200 responds with an array", () => {
                 return request(app)
                 .get("/api/articles/1/comments")
                 .expect(200)
@@ -409,7 +605,7 @@ describe("/api/articles/:article_id/comments", () => {
     })
     describe("POST", () => {
         describe("Functionality", () => {
-            test.only("status: 201 adds a comment to the comments table and responds with the added comment, followed by checking comment was added to array of comments", () => {
+            test("status: 201 adds a comment to the comments table and responds with the added comment, followed by checking comment was added to array of comments", () => {
                 const newComment = {
                     username: 'butter_bridge',
                     body: "Butter only belongs on toast"
