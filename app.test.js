@@ -724,3 +724,93 @@ describe("/api/articles/:article_id/comments", () => {
         })
     })
 })
+
+describe("/api/comments", () => {
+    describe("GET", () => {
+        describe("Functionality", () => {
+            test("status: 200 reponds with array of comments", () => {
+                return request(app)
+                    .get("/api/comments")
+                    .expect(200)
+                    .then(({body}) => {
+                        const {comments} = body
+                        expect(comments).toBeInstanceOf(Array)
+                        expect(comments).toHaveLength(18)
+                        comments.forEach((comment) => {
+                            expect(comment).toEqual(
+                                expect.objectContaining({
+                                    body: expect.any(String),
+                                    votes: expect.any(Number),
+                                    author: expect.any(String),
+                                    article_id: expect.any(Number),
+                                    created_at: expect.any(String),
+                                    comment_id: expect.any(Number)
+                                })
+                            )
+                        })
+                    })
+                })
+            })
+        })
+})
+
+describe("/api/comments/:comment_id", () => {
+    describe("DELETE", () => {
+        describe("Functionality", () => {
+            test("status: 204 removes a comment by user passed comment_id", () => {
+                return request(app)
+                .delete("/api/comments/1")
+                .expect(204)
+            })
+            test("status: 200 removes a comment by user passed comment_id, then checks if comment has been deleted", () => {
+                return request(app)
+                .delete("/api/comments/1")
+                .expect(204)
+                .then(() => {
+                    return request(app)
+                    .get("/api/comments")
+                    .expect(200)
+                    .then(({body}) => {
+                        const {comments} = body
+                        expect(comments).toBeInstanceOf(Array)
+                        expect(comments).toHaveLength(17)
+                        comments.forEach((comment) => {
+                            expect(comment).toEqual(
+                                expect.objectContaining({
+                                    body: expect.any(String),
+                                    votes: expect.any(Number),
+                                    author: expect.any(String),
+                                    article_id: expect.any(Number),
+                                    created_at: expect.any(String)
+                                })
+                            )
+                            expect(comment).not.toEqual(
+                                expect.objectContaining({
+                                    comment_id: 1
+                                })
+                            )
+                        })
+                    })
+                })
+            })
+        })
+        describe("Error Handling", () => {
+            test("status: 400 responds with appropriate message if user passes an invalid comment_id", () => {
+                return request(app)
+                .delete("/api/comments/invalid")
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Invalid request")
+                })
+            })
+            test("status: 404 reponds with appropriate message if user passed a valid, but non-existent, comment_id", () => {
+                return request(app)
+                .delete("/api/comments/999")
+                .expect(404)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Passed ID does not exist")
+                })
+            })
+        })
+    })
+})
