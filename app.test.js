@@ -863,3 +863,45 @@ describe("/api", () => {
         })
     })
 })
+
+describe("/api/users/:username", () => {
+    describe("GET", () => {
+        describe("Functionality", () => {
+            test('status: 200 responds with relevant information about a user selected User', () => {
+                return request(app)
+                .get("/api/users/butter_bridge")
+                .expect(200)
+                .then(({body}) => {
+                    const {user} = body
+                    expect(user.username).toBe("butter_bridge"),
+                    expect(user.name).toBe("jonny"),
+                    expect(user.avatar_url).toBe("https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg")
+                })
+            })
+            test('status: 200 responds with relevant information about a user selected User', () => {
+                return request(app)
+                .get("/api/users/rogersop")
+                .expect(200)
+                .then(({body}) => {
+                    const {user} = body
+                    expect(user.username).toBe("rogersop"),
+                    expect(user.name).toBe("paul"),
+                    expect(user.avatar_url).toBe("https://avatars2.githubusercontent.com/u/24394918?s=400&v=4")
+                })
+            })
+        })
+        describe("Error Handling", () => {
+            test('status: 404 responds with appropriate message when passed a valid, but non-existent, username', () => {
+                return request(app)
+                .get("/api/users/melon_man")
+                .expect(404)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Passed username does not exist")
+                })
+            })
+            test('status: 400 responds with appropriate message when passed an invalid username', () => {
+                
+            })
+        })
+    })
+})
