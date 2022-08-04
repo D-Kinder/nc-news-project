@@ -814,3 +814,38 @@ describe("/api/comments/:comment_id", () => {
         })
     })
 })
+
+describe("/api", () => {
+    describe("GET", () => {
+        describe("Functionality", () => {
+            test("status: 200 responds with information on all available endpoints", () => {
+                return request(app)
+                .get("/api")
+                .expect(200)
+                .then(({body}) => {
+                    const endpoint1 = "GET /api"
+                    const endpoint2 = "GET /api/topics"
+                    const endpoint3 = "GET /api/articles"
+                    const endpoint4 = "GET /api/articles/:article_id"
+                    const endpoint5 = "PATCH /api/articles/:article_id"
+                    const endpoint6 = "GET /api/users"
+                    const endpoint7 = "GET /api/comments"
+                    const endpoint8 = "GET /api/articles/:article_id/comments"
+                    const endpoint9 = "POST /api/articles/:article_id/comments"
+                    const endpoint10 = "DELETE /api/comments/:comment_id"
+                    expect(typeof body.endpoints).toEqual('string')
+                    expect(body.endpoints.includes(endpoint1)).toBe(true)
+                    expect(body.endpoints.includes(endpoint2)).toBe(true)
+                    expect(body.endpoints.includes(endpoint3)).toBe(true)
+                    expect(body.endpoints.includes(endpoint4)).toBe(true)
+                    expect(body.endpoints.includes(endpoint5)).toBe(true)
+                    expect(body.endpoints.includes(endpoint6)).toBe(true)
+                    expect(body.endpoints.includes(endpoint7)).toBe(true)
+                    expect(body.endpoints.includes(endpoint8)).toBe(true)
+                    expect(body.endpoints.includes(endpoint9)).toBe(true)
+                    expect(body.endpoints.includes(endpoint10)).toBe(true)
+                })
+            })
+        })
+    })
+})
