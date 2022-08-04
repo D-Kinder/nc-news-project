@@ -1,142 +1,40 @@
-# DK Northcoders News API
+# DK Northcoders News API - `https://dk-nc-news.herokuapp.com/`
 
-## Project Background
+**Project Background**
 
-
-
-Here is an API for the purpose of accessing application data programmatically. The user can access, and manipulate, varying amounts of data from a provided database based upon the endpoint that is used.  Within the database is a collection of data centred on news articles.  Users can access these articles, including other related data including:
+`dk-nc-news` is an API for the purpose of accessing application data programmatically. Users can access, and manipulate, varying amounts of data from a provided database based upon the endpoint that is used.  Within the database is a collection of data centred on news articles.  Users can access these articles, including other related data including:
 -  comments made about the articles
 -  filtering articles according to their topic
 -  a list of users who have made comments about any of the articles
+-  a list of topics that the articles have been written about 
 
-////////////// Mentioning everything I did?
+Successful execution of user requests is implemented using the MVC methodology.  This methodology will help with potential future planning, maintenance, modifications and also supports the good practise of TDD.  The `Controllers` & `Models` elements can be found in their respective folders and are named according the focus of the user request.
+
+TDD was the foundation of this application, upon which the endpoints were built.  Within `app.test.js` you will find detailed tests for each endpoint, seperated according to the type of request, and furthermore devided by `Functionality` & `Error Handling`.
 
 **Initial Set Up**
 
-Create a `.env.development` and `.env.test` file, using the the `.env-example` file as a template, to ensure the correct database name is used for each environment.  The database names can be found in the `setup.sql` file.  
+# Cloning the repository
 
-Then run `npm setup-dbs` to create the database before proceeding.
+Enter the drop-down menu available from the green `Code` button, found above the list of files within the repository.  Within this drop-down you will see a https URL, and to the right will be an option to copy this URL to the clipboard.  Copy the URL.
 
-## API endpoints
+Before cloning the repository, ensure you are in an appropriate working directory that has been git initiated.  Further details on how to do this can be found here - `https://github.com/git-guides/git-init`.  Once you are satisfied that you are in a git initiated directory, type `git clone` followed by the copied https URL.  You can now access the repository via your chosen code editing software.
 
-The following are valid endpoints that can be used to access/ modify the databases via the server.
+Use `npm install` to install the required dependencies.
 
-### 1. /api/topics
+# Environment Set Up
 
-### GET
+Create a `.env.development` and `.env.test` file, using the the `.env-example` file as a template, to ensure the correct database name is used for each environment.  The database names can be found in the `setup.sql` file.  These files will be a pathway to establishing the process.env global variable depending on the required environment.
 
-Responds with a JSON object containing a key of `topics` with a value of an array containing all of the topics objects.
+# Database Creating & Seeding
 
-E.g.
-```js
-{ 
-    "topics": [
-    {
-    description: 'The man, the Mitch, the legend',
-    slug: 'mitch'
-  },
-  {
-    description: 'Not dogs',
-    slug: 'cats'
-  },
-  {
-    description: 'what books are made of',
-    slug: 'paper'
-  }
-]
-}
-```
+Use `npm run setup-dbs` to create the databases followed by `npm run seed` in order to populate the databases with the available data.
 
-### 2. /api/articles/:article_id
+# Testing
 
-### GET
+Use `npm test app.test.js` to run the test suite containing the tests associated with processing endpoint requests to the databases.
 
-Accepts an article_id, entered as an integer, and responds with a JSON object containing a key of `article` with a value of an object containing all information on the requested article, including a count of the number of comments for that article.
+**Available endpoints**
 
-E.g.
-
-`GET /api/articles/1` Responds with...
-
-```js
-{
-  "article": {
-    author: "butter_bridge",
-    title: "Living in the shadow of a great man",
-    article_id: 1,
-    body: "I find this existence challenging",
-    topic: "mitch",
-    created_at: "2020-07-09T20:11:00.000Z",
-    votes: 100,
-    comment_count: 11
-  }
-}
-```
-
-### PATCH
-
-Accepts an article_id, entered as an integer, and body of information in the form:
-
-```js
- {
-  inc_vote: newVote
-}
-```
-Where newVote, entered as an integer, indicates how much the votes property in the database will be updated by.
-
-Responds with a JSON object containing a key of `article` with a value of an object containing all information on the requested article, with updated vote count.
-
-E.g.
-
-`PATCH /api/articles/1`
-`{ inc_vote: 10 }` Responds with...
-
-```js
-{
-  "article": {
-    author: "butter_bridge",
-    title: "Living in the shadow of a great man",
-    article_id: 1,
-    body: "I find this existence challenging",
-    topic: "mitch",
-    created_at: "2020-07-09T20:11:00.000Z",
-    votes: 110
-  }
-}
-```
-
-### 3. /api/users
-
-### GET
-
-Responds with a JSON object containing a key of `users` with a value of an array containing all of the users objects.
-
-E.g.
-```js
-{ 
-    "users": [
-    {
-    username: 'butter_bridge',
-    name: 'jonny',
-    avatar_url:
-      'https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg'
-    },
-    {
-    username: 'icellusedkars',
-    name: 'sam',
-    avatar_url: 'https://avatars2.githubusercontent.com/u/24604688?s=460&v=4'
-    },
-    {
-    username: 'rogersop',
-    name: 'paul',
-    avatar_url: 'https://avatars2.githubusercontent.com/u/24394918?s=400&v=4'
-    },
-    {
-    username: 'lurker',
-    name: 'do_nothing',
-    avatar_url:
-      'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png'
-    }
-]
-}
-```
+A list of available endpoints can be found in the `api-endpoints.json` file, or alternatively by use the endpoint `/api` within the app itself.
 

@@ -39,7 +39,7 @@ app.use((err, req, res, next) => {
         if (err.code === "22P02"){
             res.status(400).send({msg:"Invalid request"})
         } else if (err.code === "23502") {
-            res.status(400).send({msg:"Invalid data entry, please see relevant endpoint section in documentation for correct syntax"})
+            res.status(400).send({msg:"Invalid data entry, please see relevant section in /api endpoint for correct syntax"})
         } else if (err.code === "23503"){
             res.status(404).send({msg: "Passed ID does not exist"})
         }

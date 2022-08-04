@@ -238,7 +238,7 @@ describe("/api/articles/:article_id", () => {
                 .send(voteAlteration)
                 .expect(400)
                 .then(({body}) => {
-                    expect(body.msg).toBe("Invalid data entry, please see relevant endpoint section in documentation for correct syntax")
+                    expect(body.msg).toBe("Invalid data entry, please see relevant section in /api endpoint for correct syntax")
                 })
             })
         })
@@ -706,7 +706,7 @@ describe("/api/articles/:article_id/comments", () => {
                 .send(newComment)
                 .expect(400)
                 .then(({body}) => {
-                    expect(body.msg).toBe("Invalid data entry, please see relevant endpoint section in documentation for correct syntax")
+                    expect(body.msg).toBe("Invalid data entry, please see relevant section in /api endpoint for correct syntax")
                 })
             })
             test("status: 400 reponds with appropriate message when passed data entry with missing properties", () => {
@@ -718,7 +718,21 @@ describe("/api/articles/:article_id/comments", () => {
                 .send(newComment)
                 .expect(400)
                 .then(({body}) => {
-                    expect(body.msg).toBe("Invalid data entry, please see relevant endpoint section in documentation for correct syntax")
+                    expect(body.msg).toBe("Invalid data entry, please see relevant section in /api endpoint for correct syntax")
+                })
+            })
+            test("status: 400 reponds with appropriate message when passed data entry with extra properties", () => {
+                const newComment = {
+                    username: 'butter_bridge',
+                    body: "Butter only belongs on toast",
+                    extra: "or just plain bread"
+                }
+                return request(app)
+                .post("/api/articles/1/comments")
+                .send(newComment)
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Invalid data entry, please see relevant section in /api endpoint for correct syntax")
                 })
             })
         })
@@ -818,7 +832,7 @@ describe("/api/comments/:comment_id", () => {
 describe("/api", () => {
     describe("GET", () => {
         describe("Functionality", () => {
-            test.only("status: 200 responds with information on all available endpoints", () => {
+            test("status: 200 responds with information on all available endpoints", () => {
                 return request(app)
                 .get("/api")
                 .expect(200)

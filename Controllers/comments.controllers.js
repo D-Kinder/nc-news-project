@@ -16,8 +16,14 @@ exports.getCommentsByArticleId = (req, res, next) => {
 }
 
 exports.addComment = (req, res, next) => {
-    const { username, body } = req.body
+    let { username, body } = req.body
     const { article_id } = req.params
+    const reqKeys = Object.keys(req.body)
+    
+    if(reqKeys.length > 2){
+        username = undefined,
+        body = undefined
+    }
     
     insertComment(article_id, username, body).then((comment) => {
         res.status(201).send({comment})
