@@ -1,0 +1,207 @@
+{
+    "GET /api": {
+        "description": "serves up a json representation of all the available endpoints of the api"
+    },
+    "GET /api/topics": {
+        "description": "serves an array of all topics",
+        "queries": [],
+        "exampleResponse": {
+            "topics": [{ "slug": "paper", "description": "what books are made of"}]
+        }
+    },
+    "GET /api/articles": {
+        "description": "serves an array of all articles",
+        "queries": ["sort_by", "order", "topic"],
+        "validPropertiesToSortBy": ["created_at (default)", "title", "topic", "author", "body", "votes", "article_id"],
+        "validParametersToOrder": ["desc (default)", "asc"],
+        "exampleEndpoint": " GET /api/articles/sort_by=author&order=asc",
+        "exampleResponse (not complete dataset)": {
+            "articles": [
+                {
+                  "article_id": 9,
+                  "title": "They're not exactly dogs, are they?",
+                  "topic": "mitch",
+                  "author": "butter_bridge",
+                  "body": "Well? Think about it.",
+                  "created_at": "2020-06-06T09:10:00.000Z",
+                  "votes": 0,
+                  "comment_count": 2
+                },
+                {
+                  "article_id": 1,
+                  "title": "Living in the shadow of a great man",
+                  "topic": "mitch",
+                  "author": "butter_bridge",
+                  "body": "I find this existence challenging",
+                  "created_at": "2020-07-09T20:11:00.000Z",
+                  "votes": 100,
+                  "comment_count": 11
+                },
+                {
+                  "article_id": 12,
+                  "title": "Moustache",
+                  "topic": "mitch",
+                  "author": "butter_bridge",
+                  "body": "Have you seen the size of that thing?",
+                  "created_at": "2020-10-11T11:24:00.000Z",
+                  "votes": 0,
+                  "comment_count": 0
+                }
+              ]
+        }
+    },
+    "GET /api/articles/:article_id": {
+        "description": "serves relevant information about a user selected article",
+        "queries": [],
+        "exampleEndpoint": "GET /api/articles/1",
+        "exampleResponse": {
+            "article":  {
+                "article_id": 1,
+                "title": "Living in the shadow of a great man",
+                "topic": "mitch",
+                "author": "butter_bridge",
+                "body": "I find this existence challenging",
+                "created_at": "2020-07-09T20:11:00.000Z",
+                "votes": 100,
+                "comment_count": 11
+              }
+        
+        }
+    },
+    "PATCH /api/articles/:article_id": {
+        "description": "allows user to increment, or decrement, the number of votes a selected article has",
+        "queries": [],
+        "exampleBody": {
+                "inc_votes": 10
+            },
+        "exampleEndpoint": "PATCH /api/articles/1",
+        "exampleReponse": {
+            "article": {
+            "article_id": 1,
+            "title": "Living in the shadow of a great man",
+            "topic": "mitch",
+            "author": "butter_bridge",
+            "body": "I find this existence challenging",
+            "created_at": "2020-07-09T20:11:00.000Z",
+            "votes": 110
+            }
+        }
+    },
+    "GET /api/users": {
+        "description": "serves an array of all users",
+        "queries": [],
+        "exampleResponse": {
+            "users": [
+            {
+              "username": "butter_bridge",
+              "name": "jonny",
+              "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+            },
+            {
+              "username": "icellusedkars",
+              "name": "sam",
+              "avatar_url": "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
+            },
+            {
+              "username": "rogersop",
+              "name": "paul",
+              "avatar_url": "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4"
+            },
+            {
+              "username": "lurker",
+              "name": "do_nothing",
+              "avatar_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
+            }
+          ]
+        }
+    },
+    "GET /api/comments": {
+        "description": "serves an array of all comments",
+        "queries": [],
+        "exampleResponse (not complete dataset)": {
+            "comments": [
+                {
+                  "comment_id": 1,
+                  "body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                  "article_id": 9,
+                  "author": "butter_bridge",
+                  "votes": 16,
+                  "created_at": "2020-04-06T12:17:00.000Z"
+                },
+                {
+                  "comment_id": 2,
+                  "body": "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+                  "article_id": 1,
+                  "author": "butter_bridge",
+                  "votes": 14,
+                  "created_at": "2020-10-31T03:03:00.000Z"
+                },
+                {
+                  "comment_id": 3,
+                  "body": "Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.",
+                  "article_id": 1,
+                  "author": "icellusedkars",
+                  "votes": 100,
+                  "created_at": "2020-03-01T01:13:00.000Z"
+                }
+            ]
+        }
+    },
+    "GET /api/articles/:article_id/comments": {
+        "description": "serves list of comments made on a user selected article",
+        "queries": [],
+        "exampleEndpoint": "GET /api/articles/1/comments",
+        "exampleResponse (not complete dataset": {
+            "comments": [
+                {
+                  "comment_id": 1,
+                  "body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                  "article_id": 9,
+                  "author": "butter_bridge",
+                  "votes": 16,
+                  "created_at": "2020-04-06T12:17:00.000Z"
+                },
+                {
+                  "comment_id": 2,
+                  "body": "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+                  "article_id": 1,
+                  "author": "butter_bridge",
+                  "votes": 14,
+                  "created_at": "2020-10-31T03:03:00.000Z"
+                },
+                {
+                  "comment_id": 3,
+                  "body": "Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.",
+                  "article_id": 1,
+                  "author": "icellusedkars",
+                  "votes": 100,
+                  "created_at": "2020-03-01T01:13:00.000Z"
+                }
+            ]
+        }
+    },
+    "POST /api/articles/:article_id/comments": {
+        "description": "adds a comment to the comments table for a user selected article, and responds with the added comment",
+        "queries": [],
+        "exampleBody": {
+            "username": "butter_bridge",
+            "body": "Butter only belongs on toast"
+        },
+        "exampleEndpoint": "POST /api/articles/2/comments",
+        "exampleResponse": {
+            "comment": {
+                "comment_id": 19,
+                "votes": 0,
+                "author": "butter_bridge",
+                "article_id": 2,
+                "created_at": "2022-08-03T16:07:09.202Z",
+                "body": "Butter only belongs on toast"
+            }
+        }
+    },
+    "DELETE /api/comments/:comment_id": {
+        "description": "removes a user selected comment",
+        "queries": [],
+        "exampleEndpoint": "DELETE /api/comments/1"
+    }
+}
