@@ -818,7 +818,7 @@ describe("/api/comments/:comment_id", () => {
 describe("/api", () => {
     describe("GET", () => {
         describe("Functionality", () => {
-            test("status: 200 responds with information on all available endpoints", () => {
+            test.only("status: 200 responds with information on all available endpoints", () => {
                 return request(app)
                 .get("/api")
                 .expect(200)
@@ -833,17 +833,17 @@ describe("/api", () => {
                     const endpoint8 = "GET /api/articles/:article_id/comments"
                     const endpoint9 = "POST /api/articles/:article_id/comments"
                     const endpoint10 = "DELETE /api/comments/:comment_id"
-                    expect(typeof body.endpoints).toEqual('string')
-                    expect(body.endpoints.includes(endpoint1)).toBe(true)
-                    expect(body.endpoints.includes(endpoint2)).toBe(true)
-                    expect(body.endpoints.includes(endpoint3)).toBe(true)
-                    expect(body.endpoints.includes(endpoint4)).toBe(true)
-                    expect(body.endpoints.includes(endpoint5)).toBe(true)
-                    expect(body.endpoints.includes(endpoint6)).toBe(true)
-                    expect(body.endpoints.includes(endpoint7)).toBe(true)
-                    expect(body.endpoints.includes(endpoint8)).toBe(true)
-                    expect(body.endpoints.includes(endpoint9)).toBe(true)
-                    expect(body.endpoints.includes(endpoint10)).toBe(true)
+                    expect(typeof body.endpoints).toEqual('object')
+                    expect(body.endpoints.hasOwnProperty(endpoint1)).toBe(true)
+                    expect(body.endpoints.hasOwnProperty(endpoint2)).toBe(true)
+                    expect(body.endpoints.hasOwnProperty(endpoint3)).toBe(true)
+                    expect(body.endpoints.hasOwnProperty(endpoint4)).toBe(true)
+                    expect(body.endpoints.hasOwnProperty(endpoint5)).toBe(true)
+                    expect(body.endpoints.hasOwnProperty(endpoint6)).toBe(true)
+                    expect(body.endpoints.hasOwnProperty(endpoint7)).toBe(true)
+                    expect(body.endpoints.hasOwnProperty(endpoint8)).toBe(true)
+                    expect(body.endpoints.hasOwnProperty(endpoint9)).toBe(true)
+                    expect(body.endpoints.hasOwnProperty(endpoint10)).toBe(true)
                 })
             })
         })

@@ -1,8 +1,15 @@
-# Northcoders News API
+# DK Northcoders News API
 
-## Background
+## Project Background
 
-We will be building an API for the purpose of accessing application data programmatically. The intention here is to mimic the building of a real world backend service (such as reddit) which should provide this information to the front end architecture.
+
+
+Here is an API for the purpose of accessing application data programmatically. The user can access, and manipulate, varying amounts of data from a provided database based upon the endpoint that is used.  Within the database is a collection of data centred on news articles.  Users can access these articles, including other related data including:
+-  comments made about the articles
+-  filtering articles according to their topic
+-  a list of users who have made comments about any of the articles
+
+////////////// Mentioning everything I did?
 
 **Initial Set Up**
 
