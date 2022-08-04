@@ -678,7 +678,7 @@ describe("/api/articles/:article_id/comments", () => {
                 return request(app)
                 .post("/api/articles/999/comments")
                 .send(newComment)
-                .expect(404)
+                .expect(400)
                 .then(({ body }) => {
                     expect(body.msg).toBe("Passed ID does not exist")
                 })
