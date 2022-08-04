@@ -4,7 +4,7 @@ app.use(express.json())
 const {getTopics} = require("./Controllers/topics.controllers")
 const { getArticleById, updateVotesByArticleId, getArticles } = require("./Controllers/articles.controllers")
 const { getUsers, getUserByUsername } = require("./Controllers/users.controllers")
-const { getCommentsByArticleId, addComment, getComments, deleteCommentById } = require("./Controllers/comments.controllers")
+const { getCommentsByArticleId, addComment, getComments, deleteCommentById, updateVotesByCommentId } = require("./Controllers/comments.controllers")
 const {getEndpoints} = require("./Controllers/endpoints.controllers")
 const { handleInvalidRequest, handleInvalidDataEntry, handleInvalidID, handleInputError, handleServerError} = require("./error-handling/error-funcs")
 
@@ -30,6 +30,8 @@ app.delete("/api/comments/:comment_id", deleteCommentById)
 app.get("/api", getEndpoints)
 
 app.get("/api/users/:username", getUserByUsername)
+
+app.patch("/api/comments/:comment_id", updateVotesByCommentId)
 
 app.all("/*", (req, res) => {
     res.status(404).send({msg: "Endpoint not found"})

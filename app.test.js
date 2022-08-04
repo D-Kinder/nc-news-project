@@ -827,6 +827,95 @@ describe("/api/comments/:comment_id", () => {
             })
         })
     })
+    describe("PATCH", () => {
+        describe('Functionality', () => {
+            test('status: 200 increments votes for chosen comment and responds with comment details, including updated vote count', () => {
+                const voteAlteration = {
+                    inc_votes: '10'
+                }
+                return request(app)
+                .patch("/api/comments/1")
+                .send(voteAlteration)
+                .expect(200)
+                .then(({body}) => {
+                    const {comment} = body
+                    expect(comment.comment_id).toBe(1)
+                    expect(comment.body).toBe("Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!")
+                    expect(comment.author).toBe("butter_bridge")
+                    expect(comment.article_id).toBe(9)
+                    expect(comment.votes).toBe(26)
+                    expect(comment.created_at).toEqual(expect.any(String))
+                })
+            });
+            test('status: 200 decrements votes for chosen comment and responds with comment details, including updated vote count', () => {
+                const voteAlteration = {
+                    inc_votes: '-10'
+                }
+                return request(app)
+                .patch("/api/comments/1")
+                .send(voteAlteration)
+                .expect(200)
+                .then(({body}) => {
+                    const {comment} = body
+                    expect(comment.comment_id).toBe(1)
+                    expect(comment.body).toBe("Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!")
+                    expect(comment.author).toBe("butter_bridge")
+                    expect(comment.article_id).toBe(9)
+                    expect(comment.votes).toBe(6)
+                    expect(comment.created_at).toEqual(expect.any(String))
+                })
+            });
+        });
+        describe("Error Handling", () => {
+            test('status: 404 responds with appropriate message when passed a valid, but non-existent, comment_id ', () => {
+                const voteAlteration = {
+                    inc_votes: '-10'
+                }
+                return request(app)
+                .patch("/api/comments/999")
+                .send(voteAlteration)
+                .expect(404)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Passed ID does not exist")
+                })
+            })
+            test("status: 400 responds with appropiate message when passed an invalid comment_id", () => {
+                const voteAlteration = {
+                    inc_votes: '10'
+                }
+                return request(app)
+                .patch("/api/comments/invalid")
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Invalid request")
+                })
+            })
+            test("status: 400 responds with appropriate message when passed an invalid value data entry", () => {
+                const voteAlteration = {
+                    inc_votes: 'hello'
+                }
+                return request(app)
+                .patch("/api/comments/1")
+                .send(voteAlteration)
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Invalid request")
+                })
+            })
+            test("status: 400 responds with appropriate message when passed an invalid data entry format", () => {
+                const voteAlteration = {
+                    votes: 9
+                }
+                return request(app)
+                .patch("/api/comments/1")
+                .send(voteAlteration)
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Invalid data entry, please see relevant section in /api endpoint for correct syntax")
+                })
+            })
+        })
+    })
 })
 
 describe("/api", () => {
@@ -847,6 +936,8 @@ describe("/api", () => {
                     const endpoint8 = "GET /api/articles/:article_id/comments"
                     const endpoint9 = "POST /api/articles/:article_id/comments"
                     const endpoint10 = "DELETE /api/comments/:comment_id"
+                    const endpoint11 = "PATCH /api/comments/:comment_id"
+                    const endpoint12 = "GET /api/users/:username"
                     expect(typeof body.endpoints).toEqual('object')
                     expect(body.endpoints.hasOwnProperty(endpoint1)).toBe(true)
                     expect(body.endpoints.hasOwnProperty(endpoint2)).toBe(true)
@@ -858,6 +949,8 @@ describe("/api", () => {
                     expect(body.endpoints.hasOwnProperty(endpoint8)).toBe(true)
                     expect(body.endpoints.hasOwnProperty(endpoint9)).toBe(true)
                     expect(body.endpoints.hasOwnProperty(endpoint10)).toBe(true)
+                    expect(body.endpoints.hasOwnProperty(endpoint11)).toBe(true)
+                    expect(body.endpoints.hasOwnProperty(endpoint12)).toBe(true)
                 })
             })
         })
