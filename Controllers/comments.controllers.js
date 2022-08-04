@@ -1,6 +1,7 @@
-const { selectCommentsByArticleId, insertComment, selectComments, selectCommentToDelete } = require("../Models/comments.models")
+const { selectCommentsByArticleId, insertComment, selectComments, selectCommentToDelete, changeVotesByCommentId } = require("../Models/comments.models")
 const { selectArticleById } = require("../Models/articles.models")
 const fs = require("fs/promises")
+const { Console } = require("console")
 
 
 exports.getCommentsByArticleId = (req, res, next) => {
@@ -57,6 +58,16 @@ exports.deleteCommentById = (req, res, next) => {
 exports.getEndpoints = (req, res, next) => {
     return fs.readFile(`endpoints.json`, "utf-8").then((message) => {
         res.send({msg: message})
+    })
+}
+
+exports.updateVotesByCommentId = (req, res, next) => {
+    const { comment_id } = req.params
+    const { inc_votes } = req.body
+    changeVotesByCommentId(comment_id, inc_votes).then((comment) => {
+        res.send({comment})
+    }).catch((err) => {
+        next(err)
     })
 }
 

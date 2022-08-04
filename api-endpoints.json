@@ -115,6 +115,16 @@
           ]
         }
     },
+    "GET /api/users/:username": {
+      "description": "serves relevant information about a user selected comment",
+      "queries": [],
+      "exampleEndpoint": "GET /api/comments/1",
+      "exampleResponse": {
+          "username": "butter_bridge",
+          "name": "jonny",
+          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        }
+    },
     "GET /api/comments": {
         "description": "serves an array of all comments",
         "queries": [],
@@ -203,5 +213,21 @@
         "description": "removes a user selected comment",
         "queries": [],
         "exampleEndpoint": "DELETE /api/comments/1"
+    },
+    "PATCH /api/comments/:comment_id": {
+      "description": "allows user to increment, or decrement, the number of votes a selected comment has",
+      "queries": [],
+      "exampleBody": {
+        "inc_votes": 10
+      },
+      "exampleEndpoint": "PATCH /api/comments/1",
+      "exampleResponse": {
+        "comment_id": 1,
+        "body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+        "article_id": 9,
+        "author": "butter_bridge",
+        "votes": 26,
+        "created_at": "2020-04-06T12:17:00.000Z"
+      }
     }
 }
