@@ -24,6 +24,7 @@ exports.addComment = (req, res, next) => {
         username = undefined,
         body = undefined
     }
+
     
     insertComment(article_id, username, body).then((comment) => {
         res.status(201).send({comment})

@@ -6,6 +6,7 @@ const { getArticleById, updateVotesByArticleId, getArticles } = require("./Contr
 const { getUsers } = require("./Controllers/users.controllers")
 const { getCommentsByArticleId, addComment, getComments, deleteCommentById } = require("./Controllers/comments.controllers")
 const {getEndpoints} = require("./Controllers/endpoints.controllers")
+const { handleInvalidRequest, handleInvalidDataEntry, handleInvalidID, handleInputError, handleServerError} = require("./error-handling/error-funcs")
 
 
 app.get("/api/topics", getTopics) //
@@ -34,24 +35,10 @@ app.all("/*", (req, res) => {
 
 ///////////////////////////
 
-app.use((err, req, res, next) => {
-    if(err.status !== 500){
-        if (err.code === "22P02"){
-            res.status(400).send({msg:"Invalid request"})
-        } else if (err.code === "23502") {
-            res.status(400).send({msg:"Invalid data entry, please see relevant section in /api endpoint for correct syntax"})
-        } else if (err.code === "23503"){
-            res.status(404).send({msg: "Passed ID does not exist"})
-        }
-        res.status(err.status).send({ msg: err.msg} )
-        } else {
-        next(err)
-    }
-})
-
-app.use((err, req, res ,next) => {
-    res.status(500).send({msg: "There has been a problem with connecting to the server"})
-})
-
+app.use(handleInvalidRequest)
+app.use(handleInvalidDataEntry)
+app.use(handleInvalidID)
+app.use(handleInputError)
+app.use(handleServerError)
 
 module.exports = app
