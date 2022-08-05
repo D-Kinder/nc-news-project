@@ -11,11 +11,11 @@
     },
     "GET /api/articles": {
         "description": "serves an array of all articles",
-        "queries": ["sort_by", "order", "topic"],
+        "queries": ["sort_by", "order", "topic", "limit"],
         "validPropertiesToSortBy": ["created_at (default)", "title", "topic", "author", "body", "votes", "article_id"],
         "validParametersToOrder": ["desc (default)", "asc"],
-        "exampleEndpoint": " GET /api/articles/sort_by=author&order=asc",
-        "exampleResponse (not complete dataset)": {
+        "exampleEndpoint": " GET /api/articles/sort_by=author&order=asc&limit=3",
+        "exampleResponse": {
             "articles": [
                 {
                   "article_id": 9,

@@ -20,8 +20,8 @@ exports.updateVotesByArticleId = (req, res, next) => {
 }
 
 exports.getArticles = (req, res, next) => {
-    const { sort_by, order, topic } = req.query
-    const validQueries = ["sort_by", "order", "topic"]
+    const { sort_by, order, topic, limit } = req.query
+    const validQueries = ["sort_by", "order", "topic", "limit"]
 
     let isQueryInvalid = Object.keys(req.query)
     const queryValidityCheck = isQueryInvalid.filter((query) => !validQueries.includes(query))
@@ -32,8 +32,7 @@ exports.getArticles = (req, res, next) => {
         isQueryInvalid = false
     }
     
-    selectArticles(sort_by, order, topic, isQueryInvalid).then((articles) => {
-        console.log(articles)
+    selectArticles(sort_by, order, topic, limit, isQueryInvalid).then((articles) => {
         res.send({articles})
     }).catch((err) => {
         next(err)

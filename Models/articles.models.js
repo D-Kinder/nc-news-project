@@ -23,7 +23,7 @@ exports.changeVotesByArticleId = (article_id, inc_votes) => {
     })
 }
 
-exports.selectArticles = (sort_by = "created_at", order = "desc", topic, isQueryInvalid) => {
+exports.selectArticles = (sort_by = "created_at", order = "desc", topic, limit = 10, isQueryInvalid) => {
     const validSortBy = ["title", "topic", "author", "body", "created_at", "votes", "article_id"]
     const validOrder = ["asc", "desc"]
     
@@ -46,10 +46,12 @@ exports.selectArticles = (sort_by = "created_at", order = "desc", topic, isQuery
     queryString += `GROUP BY articles.article_id `
     
     if(order === "asc"){
-        queryString += `ORDER BY ${sort_by} ASC`
+        queryString += `ORDER BY ${sort_by} ASC `
     } else {
-        queryString += `ORDER BY ${sort_by} DESC`
+        queryString += `ORDER BY ${sort_by} DESC `
     }
+
+    queryString += `LIMIT ${limit}`
     
     return db.query(queryString, injectionArray).then(({rows}) => {
         if(rows.length !== 1){
@@ -63,7 +65,7 @@ exports.insertArticle = (author, title, body, topic, isBodyInvalid) => {
     if(isBodyInvalid) {
         return Promise.reject({status: 400, msg: "Invalid data entry, please see relevant section in /api endpoint for correct syntax"})
     }
-    
+
     return db.query(`INSERT INTO articles (author, title, body, topic) VALUES ($1, $2, $3, $4) RETURNING *`, [author, title, body, topic]).then(({rows}) => {
         const article_id = rows[0].article_id
         return db.query(`SELECT articles.*, COUNT(comments.article_id)::INT AS comment_count
