@@ -23,11 +23,14 @@ exports.changeVotesByArticleId = (article_id, inc_votes) => {
     })
 }
 
-exports.selectArticles = (sort_by = "created_at", order = "desc", topic, limit = 10, isQueryInvalid) => {
+exports.selectArticles = (sort_by = "created_at", order = "desc", topic, limit = 10, page=1, isQueryInvalid) => {
     const validSortBy = ["title", "topic", "author", "body", "created_at", "votes", "article_id"]
     const validOrder = ["asc", "desc"]
+    const isLimitValid = /\d/g.test(limit)
+    const isPageValid = /\d/g.test(page)
+    const offset = (page-1) * limit
     
-    if (!validSortBy.includes(sort_by) || (!validOrder.includes(order))){
+    if (!validSortBy.includes(sort_by) || (!validOrder.includes(order) || !isLimitValid || !isPageValid)){
         return Promise.reject({status: 400, msg: "Invalid query parameter"})
     }
 
@@ -51,7 +54,7 @@ exports.selectArticles = (sort_by = "created_at", order = "desc", topic, limit =
         queryString += `ORDER BY ${sort_by} DESC `
     }
 
-    queryString += `LIMIT ${limit}`
+    queryString += `LIMIT ${limit} OFFSET ${offset}`
     
     return db.query(queryString, injectionArray).then(({rows}) => {
         if(rows.length !== 1){
