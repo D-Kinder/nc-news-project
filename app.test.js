@@ -764,6 +764,110 @@ describe("/api/articles", () => {
                     expect(articles).toHaveLength(0)
                 })
             })
+            test("status: 200 reponds with articles chosen by user queries, followed by the total count of articles within the database", () => {
+                const expected = [
+                    {
+                        article_id: 9,
+                        title: "They're not exactly dogs, are they?",
+                        topic: 'mitch',
+                        author: 'butter_bridge',
+                        body: 'Well? Think about it.',
+                        created_at: "2020-06-06T09:10:00.000Z",
+                        votes: 0,
+                        comment_count: 2
+                      },
+                      {
+                        article_id: 8,
+                        title: 'Does Mitch predate civilisation?',
+                        topic: 'mitch',
+                        author: 'icellusedkars',
+                        body: 'Archaeologists have uncovered a gigantic statue from the dawn of humanity, and it has an uncanny resemblance to Mitch. Surely I am not the only person who can see this?!',
+                        created_at: "2020-04-17T01:08:00.000Z",
+                        votes: 0,
+                        comment_count: 0
+                      },
+                      {
+                        article_id: 7,
+                        title: 'Z',
+                        topic: 'mitch',
+                        author: 'icellusedkars',
+                        body: 'I was hungry.',
+                        created_at: "2020-01-07T14:08:00.000Z",
+                        votes: 0,
+                        comment_count: 0
+                      }
+                ]
+                return request(app)
+                .get("/api/articles?sort_by=article_id&limit=3&page=2")
+                .expect(200)
+                .then(({body}) => {
+                    const { articles, total_count } = body
+                    expect(articles).toEqual(expected)
+                    expect(total_count).toBe(12)
+                })
+            })
+            test("status:200 responds with articles chosen by user queries, followed by total count of articles available after filtering", () => {
+                const expected = [
+                    {
+                        article_id: 12,
+                        title: 'Moustache',
+                        topic: 'mitch',
+                        author: 'butter_bridge',
+                        body: 'Have you seen the size of that thing?',
+                        created_at: "2020-10-11T11:24:00.000Z",
+                        votes: 0,
+                        comment_count: 0
+                      },
+                      {
+                        article_id: 1,
+                        title: 'Living in the shadow of a great man',
+                        topic: 'mitch',
+                        author: 'butter_bridge',
+                        body: 'I find this existence challenging',
+                        created_at: "2020-07-09T20:11:00.000Z",
+                        votes: 100,
+                        comment_count: 11
+                      },
+                      {
+                        article_id: 9,
+                        title: "They're not exactly dogs, are they?",
+                        topic: 'mitch',
+                        author: 'butter_bridge',
+                        body: 'Well? Think about it.',
+                        created_at: "2020-06-06T09:10:00.000Z",
+                        votes: 0,
+                        comment_count: 2
+                      }
+                ]
+                return request(app)
+                .get("/api/articles?topic=mitch&limit=3&page=2")
+                .expect(200)
+                .then(({body}) => {
+                    const { articles, total_count } = body
+                    expect(articles).toEqual(expected)
+                    expect(total_count).toBe(11)
+                })
+            })
+            test("status: 200 responds with articles chosen by user queries, followed by total count of articles available after filtering", () => {
+                const expected = {
+                    article_id: 5,
+                    title: "UNCOVERED: catspiracy to bring down democracy",
+                    topic: "cats",
+                    author: "rogersop",
+                    body: "Bastet walks amongst us, and the cats are taking arms!",
+                    created_at: "2020-08-03T13:14:00.000Z",
+                    votes: 0,
+                    comment_count: 2
+                }
+                return request(app)
+                .get("/api/articles?topic=cats")
+                .expect(200)
+                .then(({body}) => {
+                    const { articles, total_count } = body
+                    expect(articles).toEqual(expected)
+                    expect(total_count).toBe(1)
+                })
+            })
         })
         describe("Error Handling", () => {
             test("status: 400 responds with appropriate message if user attempts to sort_by invalid property", () => {

@@ -53,14 +53,22 @@ exports.selectArticles = (sort_by = "created_at", order = "desc", topic, limit =
     } else {
         queryString += `ORDER BY ${sort_by} DESC `
     }
+ 
+    queryString += `LIMIT ${limit} OFFSET ${offset};`
+      
+    return db.query(queryString, injectionArray).then(({rows: articles}) => {
+        //console.log(articles)
+       queryString = `SELECT COUNT(*) FROM articles `
+       injectionArray = []
 
-    queryString += `LIMIT ${limit} OFFSET ${offset}`
-    
-    return db.query(queryString, injectionArray).then(({rows}) => {
-        if(rows.length !== 1){
-        return rows
+       if(topic !== undefined){
+        queryString += `WHERE topic = $1 `
+        injectionArray.push(topic)
         }
-        return rows[0]
+
+        return db.query(queryString, injectionArray).then(({rows: allArticles}) => {
+          return [articles, allArticles[0].count]
+         })
     })
 }
 

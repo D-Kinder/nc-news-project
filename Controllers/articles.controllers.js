@@ -33,7 +33,10 @@ exports.getArticles = (req, res, next) => {
     }
     
     selectArticles(sort_by, order, topic, limit, page, isQueryInvalid).then((articles) => {
-        res.send({articles})
+        if(articles[0].length === 1){
+            res.send({articles: articles[0][0], total_count: +articles[1]})
+        }
+        res.send({total_count: +articles[1], articles: articles[0]})
     }).catch((err) => {
         next(err)
     })
