@@ -292,7 +292,7 @@ describe("/api/articles", () => {
                     expect(articles).toHaveLength(12)
                 })
             })
-            test("status: 200 responds with articles data with correct keys and values data", () => {
+            test.only("status: 200 responds with articles data with correct keys and values data", () => {
                 return request(app)
                 .get("/api/articles")
                 .expect(200)
@@ -543,6 +543,242 @@ describe("/api/articles", () => {
             })
         })
     })
+    describe("POST", () => {
+        describe("Functionality", () => {
+            test("status: 201 responds with a newly added article", () => {
+                const newArticle = {
+                    author: "lurker",
+                    title: "white lies",
+                    body: "matt coated paper? More like FLAT coated paper!",
+                    topic:"paper"
+                }
+                return request(app)
+                .post("/api/articles")
+                .send(newArticle)
+                .expect(201)
+                .then(({body}) => {
+                    const { article } = body
+                    expect(article.author).toBe("lurker"),
+                    expect(article.title).toBe("white lies"),
+                    expect(article.body).toBe("matt coated paper? More like FLAT coated paper!"),
+                    expect(article.topic).toBe("paper"),
+                    expect(article.article_id).toBe(13),
+                    expect(article.votes).toBe(0),
+                    expect(article.created_at).toEqual(expect.any(String))
+                })
+            })
+            test("status: 201 responds with a newly added article then checks article can be retrieved", () => {
+                const newArticle = {
+                    author: "lurker",
+                    title: "white lies",
+                    body: "matt coated paper? More like FLAT coated paper!",
+                    topic:"paper"
+                }
+                return request(app)
+                .post("/api/articles")
+                .send(newArticle)
+                .expect(201)
+                .then(({body}) => {
+                    const { article } = body
+                    expect(article.author).toBe("lurker"),
+                    expect(article.title).toBe("white lies"),
+                    expect(article.body).toBe("matt coated paper? More like FLAT coated paper!"),
+                    expect(article.topic).toBe("paper"),
+                    expect(article.article_id).toBe(13),
+                    expect(article.votes).toBe(0),
+                    expect(article.created_at).toEqual(expect.any(String))
+                }).then(() => {
+                    return request(app)
+                    .get("/api/articles/13")
+                    .expect(200)
+                    .then(({body}) => {
+                        const { article } = body
+                    expect(article.author).toBe("lurker"),
+                    expect(article.title).toBe("white lies"),
+                    expect(article.body).toBe("matt coated paper? More like FLAT coated paper!"),
+                    expect(article.topic).toBe("paper"),
+                    expect(article.votes).toBe(0),
+                    expect(article.created_at).toEqual(expect.any(String))
+                    })
+                })
+            })
+            test("status: 201 responds with a newly added article, also with comment_count column", () => {
+                const newArticle = {
+                    author: "lurker",
+                    title: "white lies",
+                    body: "matt coated paper? More like FLAT coated paper!",
+                    topic:"paper"
+                }
+                return request(app)
+                .post("/api/articles")
+                .send(newArticle)
+                .expect(201)
+                .then(({body}) => {
+                    const { article } = body
+                    expect(article.author).toBe("lurker"),
+                    expect(article.title).toBe("white lies"),
+                    expect(article.body).toBe("matt coated paper? More like FLAT coated paper!"),
+                    expect(article.topic).toBe("paper"),
+                    expect(article.article_id).toBe(13),
+                    expect(article.votes).toBe(0),
+                    expect(article.created_at).toEqual(expect.any(String)),
+                    expect(article.comment_count).toBe(0)
+                })
+            })
+        })
+        describe("Error Handling", () => {
+            test("status: 400 responds with appropriate message when passed and invalid data entry format (1)", () => {
+                const newArticle = {
+                    auther: "lurker",
+                    title: "white lies",
+                    body: "matt coated paper? More like FLAT coated paper!",
+                    topic:"paper"
+                }
+                return request(app)
+                .post("/api/articles")
+                .send(newArticle)
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Invalid data entry, please see relevant section in /api endpoint for correct syntax")
+                })
+            })
+            test("status: 400 responds with appropriate message when passed and invalid data entry format (2)", () => {
+                const newArticle = {
+                    author: "lurker",
+                    titel: "white lies",
+                    body: "matt coated paper? More like FLAT coated paper!",
+                    topic:"paper"
+                }
+                return request(app)
+                .post("/api/articles")
+                .send(newArticle)
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Invalid data entry, please see relevant section in /api endpoint for correct syntax")
+                })
+            })
+            test("status: 400 responds with appropriate message when passed and invalid data entry format (3)", () => {
+                const newArticle = {
+                    author: "lurker",
+                    title: "white lies",
+                    bodee: "matt coated paper? More like FLAT coated paper!",
+                    topic:"paper"
+                }
+                return request(app)
+                .post("/api/articles")
+                .send(newArticle)
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Invalid data entry, please see relevant section in /api endpoint for correct syntax")
+                })
+            })
+            test("status: 400 responds with appropriate message when passed and invalid data entry format (4)", () => {
+                const newArticle = {
+                    author: "lurker",
+                    title: "white lies",
+                    body: "matt coated paper? More like FLAT coated paper!",
+                    toopic: "paper"
+                }
+                return request(app)
+                .post("/api/articles")
+                .send(newArticle)
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Invalid data entry, please see relevant section in /api endpoint for correct syntax")
+                })
+            })
+            test("status: 400 responds with appropriate message when passed an incomplete data entry body", () => {
+                const newArticle = {
+                    author: "lurker",
+                    title: "white lies",
+                    body: "matt coated paper? More like FLAT coated paper!",
+                }
+                return request(app)
+                .post("/api/articles")
+                .send(newArticle)
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Invalid data entry, please see relevant section in /api endpoint for correct syntax")
+                })
+            })
+            test("status: 400 responds with appropriate message when passed a data entry body with an invalid referenced value (1)", () => {
+                const newArticle = {
+                    author: "lurker",
+                    title: "white lies",
+                    body: "matt coated paper? More like FLAT coated paper!",
+                    topic: ""
+                }
+                return request(app)
+                .post("/api/articles")
+                .send(newArticle)
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Value reference error")
+                })
+            })
+            test("status: 400 responds with appropriate message when passed a data entry body with an invalid referenced value (2)", () => {
+                const newArticle = {
+                    author: "",
+                    title: "white lies",
+                    body: "matt coated paper? More like FLAT coated paper!",
+                    topic: "paper"
+                }
+                return request(app)
+                .post("/api/articles")
+                .send(newArticle)
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Value reference error")
+                })
+            })
+            test("status: 400 responds with appropriate message when passed an incomplete data entry body (1)", () => {
+                const newArticle = {
+                    author: "lurker",
+                    title: "",
+                    body: "matt coated paper? More like FLAT coated paper!",
+                    topic: "paper"
+                }
+                return request(app)
+                .post("/api/articles")
+                .send(newArticle)
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Invalid data entry, please see relevant section in /api endpoint for correct syntax")
+                })
+            })
+            test("status: 400 responds with appropriate message when passed an incomplete data entry body (2)", () => {
+                const newArticle = {
+                    author: "lurker",
+                    title: "white lies",
+                    body: "",
+                    topic: "paper"
+                }
+                return request(app)
+                .post("/api/articles")
+                .send(newArticle)
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Invalid data entry, please see relevant section in /api endpoint for correct syntax")
+                })
+            })
+            test("status: 400 reponds with appropriate message when passed a data entry body with additional properties", () => {
+                const newArticle = {
+                    author: "lurker",
+                    title: "white lies",
+                    body: "matt coated paper? More like FLAT coated paper!",
+                    topic:"paper",
+                    extra: "test"
+                }
+                return request(app)
+                .post("/api/articles")
+                .send(newArticle)
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("Invalid data entry, please see relevant section in /api endpoint for correct syntax")
+                })
+            })
+        })
+    })
 })
 
 describe("/api/articles/:article_id/comments", () => {
@@ -680,7 +916,7 @@ describe("/api/articles/:article_id/comments", () => {
                 .send(newComment)
                 .expect(400)
                 .then(({ body }) => {
-                    expect(body.msg).toBe("Passed ID does not exist")
+                    expect(body.msg).toBe("Value reference error")
                 })
             })
             test("status: 400 responds with appropiate message when passed an invalid article_id", () => {
@@ -938,6 +1174,7 @@ describe("/api", () => {
                     const endpoint10 = "DELETE /api/comments/:comment_id"
                     const endpoint11 = "PATCH /api/comments/:comment_id"
                     const endpoint12 = "GET /api/users/:username"
+                    const endpoint13 = "POST /api/articles"
                     expect(typeof body.endpoints).toEqual('object')
                     expect(body.endpoints.hasOwnProperty(endpoint1)).toBe(true)
                     expect(body.endpoints.hasOwnProperty(endpoint2)).toBe(true)
@@ -951,6 +1188,7 @@ describe("/api", () => {
                     expect(body.endpoints.hasOwnProperty(endpoint10)).toBe(true)
                     expect(body.endpoints.hasOwnProperty(endpoint11)).toBe(true)
                     expect(body.endpoints.hasOwnProperty(endpoint12)).toBe(true)
+                    expect(body.endpoints.hasOwnProperty(endpoint13)).toBe(true)
                 })
             })
         })

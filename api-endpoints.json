@@ -50,6 +50,29 @@
               ]
         }
     },
+    "POST /api/articles": {
+      "description": "adds an article to the articles table and responds with the added article",
+      "queries": [],
+      "bodyProperties": ["author", "title", "body", "topic"],
+      "exampleBody": {
+          "author": "lurker",
+          "title": "white lies",
+          "body": "matt coated paper? More like FLAT coated paper!",
+          "topic": "paper"
+      },
+      "exampleResponse": {
+        "article": {
+         "article_id": 13,
+         "title": "white lies",
+         "topic": "paper",
+         "author": "lurker",
+         "body": "matt coated paper? More like FLAT coated paper!",
+         "created_at": "2022-08-05T07:18:10.249Z",
+         "votes": 0,
+         "comment_count": 0
+        }
+      }
+    },
     "GET /api/articles/:article_id": {
         "description": "serves relevant information about a user selected article",
         "queries": [],
@@ -71,6 +94,7 @@
     "PATCH /api/articles/:article_id": {
         "description": "allows user to increment, or decrement, the number of votes a selected article has",
         "queries": [],
+        "bodyProperties": ["inc_votes"],
         "exampleBody": {
                 "inc_votes": 10
             },
@@ -193,6 +217,7 @@
     "POST /api/articles/:article_id/comments": {
         "description": "adds a comment to the comments table for a user selected article, and responds with the added comment",
         "queries": [],
+        "bodyProperties": ["username", "body"],
         "exampleBody": {
             "username": "butter_bridge",
             "body": "Butter only belongs on toast"
@@ -217,6 +242,7 @@
     "PATCH /api/comments/:comment_id": {
       "description": "allows user to increment, or decrement, the number of votes a selected comment has",
       "queries": [],
+      "bodyProperties": ["inc_votes"],
       "exampleBody": {
         "inc_votes": 10
       },

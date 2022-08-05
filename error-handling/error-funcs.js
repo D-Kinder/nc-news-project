@@ -12,9 +12,9 @@ exports.handleInvalidDataEntry = (err, req, res, next) => {
     next(err)
 }
 
-exports.handleInvalidID = (err, req, res, next) => {
+exports.handleReferenceError = (err, req, res, next) => {
     if(err.code === "23503") {
-        res.status(400).send({msg: "Passed ID does not exist"})
+        res.status(400).send({msg: "Value reference error"})
     }
     next(err)
 }
