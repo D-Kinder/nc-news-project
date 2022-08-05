@@ -289,10 +289,9 @@ describe("/api/articles", () => {
                 .then(({body}) => {
                     const { articles } = body
                     expect(articles).toBeInstanceOf(Array)
-                    expect(articles).toHaveLength(12)
                 })
             })
-            test.only("status: 200 responds with articles data with correct keys and values data", () => {
+            test("status: 200 responds with articles data with correct keys and values data", () => {
                 return request(app)
                 .get("/api/articles")
                 .expect(200)
@@ -408,7 +407,6 @@ describe("/api/articles", () => {
                 .expect(200)
                 .then(({body : { articles }}) => {
                     expect(articles).toBeInstanceOf(Array)
-                    expect(articles).toHaveLength(11)
                     expect(articles).toBeSortedBy("created_at", { descending: true})
                     articles.forEach((article) => {
                         expect(article).toEqual(
@@ -432,7 +430,6 @@ describe("/api/articles", () => {
                 .expect(200)
                 .then(({body : { articles }}) => {
                     expect(articles).toBeInstanceOf(Array)
-                    expect(articles).toHaveLength(11)
                     expect(articles).toBeSortedBy("created_at")
                     articles.forEach((article) => {
                         expect(article).toEqual(
@@ -456,7 +453,6 @@ describe("/api/articles", () => {
                 .expect(200)
                 .then(({body : { articles }}) => {
                     expect(articles).toBeInstanceOf(Array)
-                    expect(articles).toHaveLength(11)
                     expect(articles).toBeSortedBy("votes")
                     articles.forEach((article) => {
                         expect(article).toEqual(
@@ -480,7 +476,6 @@ describe("/api/articles", () => {
                 .expect(200)
                 .then(({body : { articles }}) => {
                     expect(articles).toBeInstanceOf(Array)
-                    expect(articles).toHaveLength(11)
                     expect(articles).toBeSortedBy("votes", { descending: true })
                     articles.forEach((article) => {
                         expect(article).toEqual(
@@ -505,6 +500,94 @@ describe("/api/articles", () => {
                 .then(({body : { articles }}) => {
                     expect(articles).toBeInstanceOf(Array)
                     expect(articles).toHaveLength(0)
+                })
+            }),
+            test("status: 200 responds with limited length array of results when passed a limit query", () => {
+                return request(app)
+                .get("/api/articles?limit=5")
+                .expect(200)
+                .then(({body}) => {
+                    const { articles } = body
+                    expect(articles).toBeInstanceOf(Array)
+                    expect(articles).toHaveLength(5)
+                    articles.forEach((article) => {
+                        expect(article.article_id).toEqual(expect.any(Number))
+                        expect(article.title).toEqual(expect.any(String))
+                        expect(article.topic).toEqual(expect.any(String))
+                        expect(article.author).toEqual(expect.any(String))
+                        expect(article.body).toEqual(expect.any(String))
+                        expect(article.created_at).toEqual(expect.any(String))
+                        expect(article.votes).toEqual(expect.any(Number))
+                        expect(article.comment_count).toEqual(expect.any(Number))
+                    })
+                })
+            })
+            test("status: 200 responds with array of results, limited to 10, if no limit query passed", () => {
+                return request(app)
+                .get("/api/articles")
+                .expect(200)
+                .then(({body}) => {
+                    const { articles } = body
+                    expect(articles).toBeInstanceOf(Array)
+                    expect(articles).toHaveLength(10)
+                    articles.forEach((article) => {
+                        expect(article.article_id).toEqual(expect.any(Number))
+                        expect(article.title).toEqual(expect.any(String))
+                        expect(article.topic).toEqual(expect.any(String))
+                        expect(article.author).toEqual(expect.any(String))
+                        expect(article.body).toEqual(expect.any(String))
+                        expect(article.created_at).toEqual(expect.any(String))
+                        expect(article.votes).toEqual(expect.any(Number))
+                        expect(article.comment_count).toEqual(expect.any(Number))
+                    })
+                })
+            })
+            test("status: 200 responds with articles data, limited to 10 (default), filtered by a passed query, sorted by created_at (default) and ordered by passed query", () => {
+                return request(app)
+                .get("/api/articles?topic=mitch&order=asc")
+                .expect(200)
+                .then(({body : { articles }}) => {
+                    expect(articles).toBeInstanceOf(Array)
+                    expect(articles).toHaveLength(10)
+                    expect(articles).toBeSortedBy("created_at")
+                    articles.forEach((article) => {
+                        expect(article).toEqual(
+                            expect.objectContaining({
+                                topic: "mitch",
+                                article_id: expect.any(Number),
+                                title: expect.any(String),
+                                author: expect.any(String),
+                                body: expect.any(String),
+                                created_at: expect.any(String),
+                                votes: expect.any(Number),
+                                comment_count: expect.any(Number)
+                            })
+                        )
+                    })
+                })
+            })
+            test("status: 200 responds with articles data, limited to 5, filtered by a passed query, sorted by created_at (default) and ordered by passed query", () => {
+                return request(app)
+                .get("/api/articles?topic=mitch&order=asc&limit=5")
+                .expect(200)
+                .then(({body : { articles }}) => {
+                    expect(articles).toBeInstanceOf(Array)
+                    expect(articles).toHaveLength(5)
+                    expect(articles).toBeSortedBy("created_at")
+                    articles.forEach((article) => {
+                        expect(article).toEqual(
+                            expect.objectContaining({
+                                topic: "mitch",
+                                article_id: expect.any(Number),
+                                title: expect.any(String),
+                                author: expect.any(String),
+                                body: expect.any(String),
+                                created_at: expect.any(String),
+                                votes: expect.any(Number),
+                                comment_count: expect.any(Number)
+                            })
+                        )
+                    })
                 })
             })
         })
