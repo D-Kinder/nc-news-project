@@ -11,7 +11,7 @@
     },
     "GET /api/articles": {
         "description": "serves an array of all articles",
-        "queries": ["sort_by", "order", "topic", "limit"],
+        "queries": ["sort_by", "order", "topic", "limit", "page"],
         "validPropertiesToSortBy": ["created_at (default)", "title", "topic", "author", "body", "votes", "article_id"],
         "validParametersToOrder": ["desc (default)", "asc"],
         "exampleEndpoint": " GET /api/articles/sort_by=author&order=asc&limit=3",
